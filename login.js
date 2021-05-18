@@ -1,11 +1,28 @@
 const fs = require("fs");
-const login = require("facebook-chat-api");
+const puppeteer = require("puppeteer");
 
-var credentials = {email: "FB_EMAIL", password: "FB_PASSWORD"};
+const email = "EMAIL";
+const password = "PASSWORD";
 
-login(credentials, (err, api) => {
-	if(err) return console.error(err);
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  const navigationPromise = page.waitForNavigation({
+    waitUntil: "networkidle0",
+  });
 
-	//saves AppState to appstate.json file
-	fs.writeFileSync('appstate.json', JSON.stringify(api.getAppState()));
-});
+  await page.goto("https://www.facebook.com/");
+
+  await page.waitForSelector("#email");
+  await page.type("#email", email);
+  await page.type("#pass", password);
+  await page.click('button[name="login"]');
+
+  await page.waitForSelector("div[role=feed]");
+
+  cookies = await page.cookies();
+  cookies = cookies.map(({ name: key, ...rest }) => ({ key, ...rest }));
+  fs.writeFileSync("appstate.json", JSON.stringify(cookies));
+
+  await browser.close();
+})();
