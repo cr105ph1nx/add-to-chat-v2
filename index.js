@@ -5,7 +5,7 @@ const fs = require("fs");
 // populate teams array
 var team = {
   name: "Incubation",
-  threadID: "4028064160609756", // change to accurate thread ID
+  threadID: "3849463345099552", // change to accurate thread ID
   file: "./members.txt",
 };
 
