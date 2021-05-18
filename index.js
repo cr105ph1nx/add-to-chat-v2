@@ -32,7 +32,7 @@ login(
         if (err) {
           // if error, attempt to send the member a message
           let message = {
-            body: "Hello, I'm a member of OpenMindsClub and this is an automatic message. Our bot tried to add you to your new team's chat group but if you're reading this message, that means it ran on some trouble. Try contacting me or the club's page for more information.",
+            body: "Hello, I'm a member of OpenMindsClub and this is an automatic message. Excuse the message we sent earlier, it was a running test. Our bot tried to add you to your new team's chat group but if you're reading this message, that means it ran on some trouble, probably your account is privated. Try contacting me or the club's page for more information. ",
           };
 
           // get name of user
