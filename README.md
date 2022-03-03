@@ -1,12 +1,15 @@
 # Add New Members To Team Chat
 
-This is a messenger-chat-bot that adds multiple people to a chat group. A `unhandled.txt` file will be created at the end of the script that will contain all the people who couldn't have been added.
+This is a messenger-chat-bot that adds multiple people to a chat group. An `unhandled.txt` file will be created at the end of the script that will contain all the people who couldn't have been added.
 
 # Requirements
 
-[nodejs](https://nodejs.org/en/)<br>
+[nodejs](https://nodejs.org/en/)
+
 [facebook-chat-api](https://github.com/Schmavery/facebook-chat-api)
+
 [puppeteer](https://www.npmjs.com/package/puppeteer)
+
 [dotenv](https://www.npmjs.com/package/dotenv)
 
 # Install

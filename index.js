@@ -2,10 +2,9 @@ require("dotenv").config();
 const readline = require("readline");
 const app = require("facebook-chat-api");
 const fs = require("fs");
-const { exit } = require("process");
 const login = require("./login.js");
 
-// populate teams array
+// populate teams obj
 var team = {
   name: "Incubation",
   threadID: process.env.THREAD_ID,
@@ -14,15 +13,12 @@ var team = {
 
 // create appstate.json file
 login.getAppstate(process.env.EMAIL, process.env.PASSWORD, (prompt, err) => {
-  // handle error
   if (err) {
     console.log(err);
-    // exit program with exit code 1
     process.exit(1);
   }
   // log login.js prompt
   console.log(prompt);
-  // mention @everyone in thread id
   app(
     { appState: JSON.parse(fs.readFileSync("appstate.json", "utf8")) },
     (err, api) => {
@@ -37,7 +33,6 @@ login.getAppstate(process.env.EMAIL, process.env.PASSWORD, (prompt, err) => {
       let readInterface = readline.createInterface({
         input: fs.createReadStream(team.file),
       });
-
       // read file for member_id line by line
       readInterface.on("line", (member_id) => {
         // attempt to add member_id to group chat
