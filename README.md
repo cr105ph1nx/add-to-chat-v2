@@ -1,38 +1,46 @@
 # Add New Members To Team Chat
 
-This is a messenger-chat-bot that adds all new comers to their chat's team. It handles cases where users have disabled the function in their profile.
+This is a messenger-chat-bot that adds multiple people to a chat group. A `unhandled.txt` file will be created at the end of the script that will contain all the people who couldn't have been added.
 
 # Requirements
 
 [nodejs](https://nodejs.org/en/)<br>
 [facebook-chat-api](https://github.com/Schmavery/facebook-chat-api)
+[puppeteer](https://www.npmjs.com/package/puppeteer)
+[dotenv](https://www.npmjs.com/package/dotenv)
 
 # Install
 
 To install nodejs on Debian-based:
+
 ```
 sudo apt install nodejs
 ```
 
-Then clone this repo, and install the [facebook-chat-api](https://github.com/Schmavery/facebook-chat-api)
+Then clone this repo, and install the dependencies with
+
 ```
 git clone https://github.com/cr105ph1nx/add-to-chat.git
 cd add-to-chat/
-npm install
+npm ci
 ```
 
 # Usage
 
-First, change the "FB_EMAIL" and "FB_PASSWORD" in the login.js file to your email and password then execute it:
+1- First, add a `.env` file and save in it the following information:
+
 ```
-node login.js
+EMAIL = your fb email
+PASSWORD = your fb password
+THREAD_ID = id of the chat group you want to add people in
 ```
-This generates the appstate.json file that you will use to login without your plain text credentials, 
-Once you complete that step, delete your email and password from the login.js file
-(ps: please don't upload your plain-text passwords to the internet!)<br>
-then run:
+
+2- Add a file `members.txt` containing the IDs of the people you want to add, separated by a new line
+
+3- Then, execute the script with with:
+
 ```
-node index.js
+npm run start
 ```
 
 # Note

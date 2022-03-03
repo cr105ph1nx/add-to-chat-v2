@@ -1,100 +1,77 @@
-const login = require("facebook-chat-api");
+require("dotenv").config();
 const readline = require("readline");
+const app = require("facebook-chat-api");
 const fs = require("fs");
+const { exit } = require("process");
+const login = require("./login.js");
 
 // populate teams array
 var team = {
   name: "Incubation",
-  threadID: "3849463345099552", // change to accurate thread ID
+  threadID: process.env.THREAD_ID,
   file: "./members.txt",
 };
 
-login(
-  { appState: JSON.parse(fs.readFileSync("appstate.json", "utf8")) },
-  (err, api) => {
-    if (err) return console.error(err);
-
-    // set log options
-    api.setOptions({
-      selfListen: true,
-      logLevel: "silent",
-    });
-
-    // set stream config
-    let readInterface = readline.createInterface({
-      input: fs.createReadStream(team.file),
-    });
-
-    // read file for member_id line by line
-    readInterface.on("line", (member_id) => {
-      // attempt to add member_id to group chat
-      api.addUserToGroup(member_id, team.threadID, (err) => {
-        if (err) {
-          // if error, attempt to send the member a message
-          let message = {
-            body: "Hello, I'm a member of OpenMindsClub and this is an automatic message. Excuse the message we sent earlier, it was a running test. Our bot tried to add you to your new team's chat group but if you're reading this message, that means it ran on some trouble, probably your account is privated. Try contacting me or the club's page for more information. ",
-          };
-
-          // get name of user
-          api.getUserInfo(member_id, (err, ret) => {
-            let fbName = ret[Object.keys(ret)[0]].name; // returns name 
-            let profileUrl = ret[Object.keys(ret)[0]].profileUrl // returns url
-            api.sendMessage(message, member_id, (err, messageInfo) => {
-              console.log(fbName);
-              // if error, write member history to unhandled list
-              if (err) {
-                let member =
-                  "userID: " +
-                  member_id +
-                  ", " +
-                  "fbName: " +
-                  fbName +
-                  ", " +
-                  "profileUrl: " +
-                  profileUrl +
-                  ", " +
-                  "team: " +
-                  team.name +
-                  ", " +
-                  "messaged: false, " +
-                  "error: " +
-                  messageInfo +
-                  "; \n";
-  
-                fs.appendFile("unhandled.txt", member, (err) => {
-                  if (err) return console.log(err);
-                  console.log("wrote to unhandled.");
-                });
-              } else {
-                // if success, write member history to contacted list
-                let member =
-                  "userID: " +
-                  member_id +
-                  ", " +
-                  "fbName: " +
-                  fbName +
-                  ", " +
-                  "profileUrl: " +
-                  profileUrl +
-                  ", " +
-                  "team: " +
-                  team.name +
-                  ", " +
-                  "messaged: true; \n";
-                fs.appendFile("contacted.txt", member, (err) => {
-                  if (err) return console.log(err);
-                  console.log("wrote to contacted.");
-                });
-              }
-           
-            });
-
-          });
-
-
-
-        }
-      });
-    });
+// create appstate.json file
+login.getAppstate(process.env.EMAIL, process.env.PASSWORD, (prompt, err) => {
+  // handle error
+  if (err) {
+    console.log(err);
+    // exit program with exit code 1
+    process.exit(1);
   }
-);
+  // log login.js prompt
+  console.log(prompt);
+  // mention @everyone in thread id
+  app(
+    { appState: JSON.parse(fs.readFileSync("appstate.json", "utf8")) },
+    (err, api) => {
+      fs.writeFileSync("appstate.json", JSON.stringify(api.getAppState()));
+
+      api.setOptions({
+        selfListen: true,
+        logLevel: "warn",
+      });
+
+      // set stream config
+      let readInterface = readline.createInterface({
+        input: fs.createReadStream(team.file),
+      });
+
+      // read file for member_id line by line
+      readInterface.on("line", (member_id) => {
+        // attempt to add member_id to group chat
+        api.addUserToGroup(member_id, team.threadID, (err) => {
+          if (err) {
+            // if error, save profile to textfile
+            // get info of user
+            api.getUserInfo(member_id, (err, ret) => {
+              let fbName = ret[Object.keys(ret)[0]].name; // returns name
+              let profileUrl = ret[Object.keys(ret)[0]].profileUrl; // returns url
+              let member =
+                "userID: " +
+                member_id +
+                ", " +
+                "fbName: " +
+                fbName +
+                ", " +
+                "profileUrl: " +
+                profileUrl +
+                ", " +
+                "team: " +
+                team.name +
+                ", " +
+                "error: " +
+                err +
+                "; \n";
+
+              fs.appendFile("unhandled.txt", member, (err) => {
+                console.log(`wrote ${fbName} to unhandled.`);
+              });
+            });
+          }
+        });
+      });
+    }
+  );
+});

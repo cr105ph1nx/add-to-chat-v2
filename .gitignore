@@ -1,1 +1,5 @@
 node_modules
+.env
+appstate.json
+unhandled.txt
+members.txt

@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "facebook-chat-api": "^1.8.0"
+    "dotenv": "^16.0.0",
+    "facebook-chat-api": "^1.8.0",
+    "puppeteer": "^13.4.1"
   }
 }
